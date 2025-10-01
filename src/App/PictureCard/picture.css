@@ -1,6 +1,6 @@
 .mainBox {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 0.2em;
 }
@@ -8,4 +8,14 @@
   width: 2em;
   height: 2em;
   border: 1.5px solid white;
+}
+
+.pictureCard {
+  display: flex;
+  border: 2px solid white;
+  width: 150px;
+}
+
+.pokePicture {
+  width: 100%;
 }
