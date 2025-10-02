@@ -3,13 +3,20 @@ import { randomNumberList } from "../../assets/randomNumbers/random.jsx";
 import { getPokemonInfo } from "../../assets/pokemonAPI/pokemon.jsx";
 import { useState, useEffect } from "react";
 
-export default function PictureCard() {
-  const [numberList, setNumberList] = useState(randomNumberList(15));
+export default function PictureCard({
+  setCurrentScore,
+  currentStreak,
+  updateStreak,
+  highScore,
+  setHighScore,
+}) {
   const [pokemonData, setPokemonData] = useState(null);
 
   useEffect(() => {
-    getAllPokemonData(numberList).then((data) => setPokemonData(data));
-  }, [numberList]);
+    getAllPokemonData(randomNumberList(15)).then((data) =>
+      setPokemonData(data)
+    );
+  }, []);
 
   async function getAllPokemonData(array) {
     let dataArray = [];
@@ -24,9 +31,9 @@ export default function PictureCard() {
     return dataArray;
   }
 
-  function jumbleArray() {
-    let currentIndex = numberList.length;
-    let array = numberList.slice(0);
+  function shuffleArray() {
+    let currentIndex = 15;
+    let array = [...pokemonData];
 
     while (currentIndex !== 0) {
       let randomIndex = Math.floor(Math.random() * currentIndex);
@@ -37,8 +44,27 @@ export default function PictureCard() {
         array[currentIndex],
       ];
     }
-    console.log(array);
-    setNumberList(array);
+    return array;
+  }
+
+  function streakUpdate(e) {
+    let newList = currentStreak.slice(0);
+    newList.push(e.target.id);
+    updateStreak(newList);
+  }
+
+  function handleClick(e) {
+    setPokemonData(shuffleArray);
+    if (!currentStreak.includes(e.target.id)) {
+      setCurrentScore((prev) => prev + 1);
+      if (currentStreak.length >= highScore) {
+        setHighScore((prev) => prev + 1);
+      }
+      streakUpdate(e);
+    } else {
+      setCurrentScore(0);
+      updateStreak([]);
+    }
   }
 
   return (
@@ -49,9 +75,13 @@ export default function PictureCard() {
             <div
               key={data.key}
               className="pictureCard"
-              onClick={() => jumbleArray()}
+              onClick={(e) => handleClick(e)}
             >
-              <img className="pokePicture" src={data.imgUrl}></img>
+              <img
+                id={data.key}
+                className="pokePicture"
+                src={data.imgUrl}
+              ></img>
             </div>
           );
         })
